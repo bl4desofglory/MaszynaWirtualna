@@ -21,29 +21,33 @@ enum menuGlowne { mgZakoncz = 0, mgOpis, mgTworz, mgWykonajLiniowo, mgWykonajKro
 enum menuPomoc { mpPowrot = 0, mpOperacje};
 enum menuOperacje { moPowrot = 0 };
 enum trybWykonywania { tLiniowo = 0, tKrokowo = 1 };
+enum bladOperacji { bladDziel = 0, bladEof, bladOtwarcia };
 
 const char szF[3][2] = { "U", "Z", "D" };
 const char szR[12][9] = { "dodaj"  , "odejmij" , "mnoz"   , "dziel"   ,
-                             "porownaj", "kopiuj"  , "skocz"  , "wczytaj" ,
-                             "pobierz" , "wyswietl", "zakoncz", "zapisz" };
+    "porownaj", "kopiuj"  , "skocz"  , "wczytaj" ,
+    "pobierz" , "wyswietl", "zakoncz", "zapisz" };
 const char s = ' ';
 
 void wyswietlMenu();
 void wyswietlMenuSzczegoly();
 void wyswietlMenuOperacje();
+void wyswietlMenuPrzyklady();
 void wyswietlOperacje();
+void wyswietlPrzyklad(int iKtory);
+void wyswietlBlad(int iBlad);
 void plikWykonaj(fstream &plik, int iTryb);
 void wyswietlPlik(fstream &plik);
 void plikTworz(fstream &plik);
 void plikZamknij(fstream &plik);
-int plikOtworzWej(fstream &plik);
-int plikOtworzWyj(fstream &plik);
+int  plikOtworzWej(fstream &plik);
+int  plikOtworzWyj(fstream &plik);
 void plikSkok(fstream &plik, int &iSlowo, unsigned int &cntInstrukcja);
 void menuGlowne(fstream &plik);
 void menuSzczegoly(fstream &plik);
 void menuOperacje(fstream &plik);
-void wyswietlRozkaz(int iRozkaz);
-void wyswietlRozkazInt(int iRozkaz, int iSlowo);
+void menuPrzyklad(fstream &plik, int iKtory);
+void menuPrzyklady(fstream &plik);
 
 int main(int argc, const char * argv[])
 {
@@ -101,6 +105,56 @@ void menuSzczegoly(fstream &plik)
     } while(iWybor != 0);
 }
 
+void menuPrzyklady(fstream &plik)
+{
+    int iWybor = 0;
+    
+    do
+    {
+        wyswietlMenuPrzyklady();
+        cin >> iWybor;
+        switch(iWybor)
+        {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            {
+                menuPrzyklad(plik, iWybor);
+                break;
+            }
+            case 0:
+            {
+                menuGlowne(plik);
+                iWybor = 0;
+                break;
+            }
+            default: break;
+        }
+    } while(iWybor != 0);
+}
+
+void menuPrzyklad(fstream &plik, int iKtory)
+{
+    int iWybor = 0;
+    
+    do
+    {
+        wyswietlPrzyklad(iKtory);
+        cin >> iWybor;
+        switch(iWybor)
+        {
+            case 0:
+            {
+                menuPrzyklady(plik);
+                iWybor = 0;
+                break;
+            }
+            default: break;
+        }
+    } while(iWybor != 0);
+}
+
 void menuGlowne(fstream &plik)
 {
     int iWybor = 0;
@@ -135,7 +189,7 @@ void menuGlowne(fstream &plik)
             }
             case mgPrzyklady:
             {
-                
+                menuPrzyklady(plik);
             }
             case mgZakoncz:
             {
@@ -155,8 +209,7 @@ int plikOtworzWej(fstream &plik)
     cin >> plikNazwa;
     strcat(plikNazwa, ".bin");
     plik.open(plikNazwa, ios::in | ios::binary);
-    //plik.open("projekt.bin", ios::in | ios::binary);
-    if(!plik)
+    if(!plik.good())
     {
         cerr << "Blad otwarcia pliku: " << plikNazwa << endl;
         return -1;
@@ -172,7 +225,7 @@ int plikOtworzWyj(fstream &plik)
     cin >> plikNazwa;
     strcat(plikNazwa, ".bin");
     plik.open(plikNazwa, ios::out | ios::binary);
-    if(!plik)
+    if(!plik.good())
     {
         cerr << "Blad otwarcia pliku: " << plikNazwa << endl;
         return -1;
@@ -197,7 +250,7 @@ void plikTworz(fstream &plik)
     short itIndeks[2];
     int iSlowo = 0;
     bool bBlad = true;
-
+    
     while(iOperacja != opZapisz)
     {
         cout << "Podaj operacje: " << endl << "> ";
@@ -222,6 +275,7 @@ void plikTworz(fstream &plik)
                     else
                         bBlad = false;
                 }
+                
                 bBlad = true;
                 while(bBlad)
                 {
@@ -234,10 +288,11 @@ void plikTworz(fstream &plik)
                     else
                         bBlad = false;
                 }
+                
                 iRozkaz = (itIndeks[r2] << 10) | (itIndeks[r1] << 4) | iOperacja;
                 
                 plik.write((char*)&iRozkaz, 2);
-                wyswietlRozkaz(iRozkaz);
+                cout << "Operacja " << szR[iOperacja] << ": " << itIndeks[r2] << "*2^10 + " << itIndeks[r1] << "*2^4 + " << iOperacja << " = "<< iRozkaz << endl;
                 cntInstrukcja++;
                 break;
             }
@@ -256,12 +311,13 @@ void plikTworz(fstream &plik)
                     else
                         bBlad = false;
                 }
+                
                 itIndeks[r2] = 0;
                 
                 iRozkaz = (itIndeks[r2] << 10) | (itIndeks[r1] << 4) | iOperacja;
-                
+   
                 plik.write((char*)&iRozkaz, 2);
-                wyswietlRozkaz(iRozkaz);
+                cout << "Operacja " << szR[iOperacja] << ": " << itIndeks[r1] << "*2^4 + " << iOperacja << " = "<< iRozkaz << endl;
                 cntInstrukcja++;
                 break;
             }
@@ -279,6 +335,7 @@ void plikTworz(fstream &plik)
                     else
                         bBlad = false;
                 }
+                
                 itIndeks[r2] = 0;
                 
                 bBlad = true;
@@ -293,10 +350,12 @@ void plikTworz(fstream &plik)
                     else
                         bBlad = false;
                 }
+                
                 iRozkaz = (itIndeks[r2] << 10) | (itIndeks[r1] << 4) | iOperacja;
+                
                 plik.write((char*)&iRozkaz, 2);
                 plik.write((char*)&iSlowo, 4);
-                wyswietlRozkazInt(iRozkaz, iSlowo);
+                cout << "Operacja " << szR[iOperacja] << ": " << itIndeks[r2] << "*2^10 + " << itIndeks[r1] << "*2^4 + " << iOperacja << " = "<< iRozkaz << " SKOK: " << iSlowo << endl;
                 cntInstrukcja++;
                 break;
             }
@@ -331,7 +390,7 @@ void plikTworz(fstream &plik)
                 iRozkaz = (itIndeks[r2] << 10) | (itIndeks[r1] << 4) | iOperacja;
                 plik.write((char*)&iRozkaz, 2);
                 plik.write((char*)&iSlowo, 4);
-                wyswietlRozkazInt(iRozkaz, iSlowo);
+                cout << "Operacja " << szR[iOperacja] << ": " << itIndeks[r2] << "*2^10 + " << itIndeks[r1] << "*2^4 + " << iOperacja << " = "<< iRozkaz << " STALA: " << iSlowo << endl;
                 cntInstrukcja++;
                 break;
             }
@@ -380,9 +439,7 @@ void plikWykonaj(fstream &plik, int iTryb)
         
         plik.read(ctRozkaz, 2);
         iWczytano = plik.gcount();
-        iRozkaz = (int)ctRozkaz[r2];
-        iRozkaz <<= 8;
-        iRozkaz |= (int)ctRozkaz[r1];
+        iRozkaz = ((int)ctRozkaz[r2] << 8) | (int)ctRozkaz[r1];
         iOperacja = iRozkaz & 15;
         itIndeks[r1] = (iRozkaz & 1008) >> 4;
         itIndeks[r2] = (iRozkaz & 64512) >> 10;
@@ -391,31 +448,28 @@ void plikWykonaj(fstream &plik, int iTryb)
         if(iOperacja == opSkocz)
         {
             plik.read(ctSlowo, 4);
-            iSlowo = (int)ctSlowo[3];
-            iSlowo <<= 8;
-            iSlowo |= (int)ctSlowo[2];
-            iSlowo <<= 8;
-            iSlowo |= (int)ctSlowo[1];
-            iSlowo <<= 8;
-            iSlowo |= (int)ctSlowo[0];
+            iSlowo = ((int)ctSlowo[3] << 24) | ((int)ctSlowo[2] << 16) | ((int)ctSlowo[1] << 8) | ((int)ctSlowo[0]);
             iBufor = itIndeks[r1];
             itIndeks[r1] = 0;
             iWczytano += 4;
         }
         
-        cout << "+--------------------WYKONYWANIE PLIKU MASZYNY WIRTUALNEJ--------------------+" << endl;
-        cout << "| OP("<<setw(2)<<iOperacja<<"): "<<setw(11-strlen(szR[iOperacja]))<<s<<szR[iOperacja]<<" R1("<<setw(2)<<itIndeks[r1]<<"): "<<setw(10)<<iRejestr[itIndeks[r1]]<<" R2("<<setw(2)<<itIndeks[r2]<<"):"<<setw(10)<<iRejestr[itIndeks[r2]]<<" SLOWO: "<<setw(10)<<iSlowo<<" |"<< endl;
-        cout << "| ROZKAZ: "<<setw(11)<<iRozkaz<<" FLAGA: "<<szF[iFlaga+1]<<setw(11)<<s<<"KROK: "<<setw(11)<<cntInstrukcja<<setw(19)<<s<<"|"<<endl;
-        cout << "| WCZYTANO:   "<<iWczytano<<" bajty"<<setw(20)<<s<<"KARETKA: "<<setw(8)<<plik.tellg()<<setw(19)<<s<<"|" << endl;
-        cout << "+--------------------------------------+-------------------------------------+" << endl;
+        cout << "+--------------------WYKONYWANIE PLIKU MASZYNY WIRTUALNEJ---------------------+" << endl;
+        cout << "| OP("<<setw(2)<<iOperacja<<"): "<<setw(11-strlen(szR[iOperacja]))<<s<<szR[iOperacja]<<" R1("<<setw(2)<<itIndeks[r1]<<"): "<<setw(10)<<iRejestr[itIndeks[r1]]<<" R2("<<setw(2)<<itIndeks[r2]<<"):"<<setw(10)<<iRejestr[itIndeks[r2]]<<" SLOWO: "<<setw(10)<<iSlowo<<"  |"<< endl;
+        cout << "| ROZKAZ: "<<setw(11)<<iRozkaz<<" FLAGA: "<<szF[iFlaga+1]<<setw(11)<<s<<"KROK: "<<setw(11)<<cntInstrukcja<<setw(20)<<s<<"|"<<endl;
+        cout << "| WCZYTANO:   "<<iWczytano<<" bajty"<<setw(20)<<s<<"KARETKA: "<<setw(8)<<plik.tellg()<<setw(20)<<s<<"|" << endl;
         
         if(iTryb == tKrokowo)
         {
-            cout << "| 1. Wykonaj instrukcje                | 2. Zakoncz wykonywanie pliku        |" << endl;
-            cout << "+--------------------------------------+-------------------------------------+" << endl;
+            cout << "+--------------------------------------+--------------------------------------+" << endl;
+            cout << "| 1. Wykonaj instrukcje                | 2. Zakoncz wykonywanie pliku         |" << endl;
+            cout << "+--------------------------------------+--------------------------------------+" << endl;
             cin >> iGUI;
         }
-    
+        else
+            cout << "+-----------------------------------------------------------------------------+" << endl;
+            
+        
         switch(iOperacja)
         {
             case opDodaj: // dodaj
@@ -459,13 +513,16 @@ void plikWykonaj(fstream &plik, int iTryb)
                 {
                     iRejestr[itIndeks[r1]] /= iRejestr[itIndeks[r2]];
                     iRejestr[itIndeks[r2]] = iBufor%iRejestr[itIndeks[r2]];
+                    
+                    if(iRejestr[itIndeks[r1]] > 0)
+                        iFlaga = flD;
+                    else if(iRejestr[itIndeks[r1]] < 0)
+                        iFlaga = flU;
+                    else
+                        iFlaga = flZ;
                 }
-                if(iRejestr[itIndeks[r1]] > 0)
-                    iFlaga = flD;
-                else if(iRejestr[itIndeks[r1]] < 0)
-                    iFlaga = flU;
                 else
-                    iFlaga = flZ;
+                    wyswietlBlad(bladDziel);
                 break;
             }
             case opPorownaj:
@@ -536,13 +593,7 @@ void plikWykonaj(fstream &plik, int iTryb)
             case opWczytaj:
             {
                 plik.read(ctSlowo, 4);
-                iSlowo = (int)ctSlowo[3];
-                iSlowo <<= 8;
-                iSlowo |= (int)ctSlowo[2];
-                iSlowo <<= 8;
-                iSlowo |= (int)ctSlowo[1];
-                iSlowo <<= 8;
-                iSlowo |= (int)ctSlowo[0];
+                iSlowo = ((int)ctSlowo[3] << 24) | ((int)ctSlowo[2] << 16) | ((int)ctSlowo[1] << 8) | ((int)ctSlowo[0]);
                 break;
             }
             case opPobierz:
@@ -563,6 +614,12 @@ void plikWykonaj(fstream &plik, int iTryb)
                 break;
             }
             default: break;
+        }
+        
+        if(plik.eof())
+        {
+            wyswietlBlad(bladEof);
+            iGUI = 2;
         }
     }
     plikZamknij(plik);
@@ -608,17 +665,19 @@ void wyswietlOperacje()
     cout << "|  9 | wyswietl | wypisz R1           +-----+---------------------------------+" << endl;
     cout << "| 10 | zakoncz  | zakoncz program     | INT | skok o INT rozkazow             |" << endl;
     cout << "+----+----------+---------------------+-----+---------------------------------+" << endl;
-    cout << "| 11 | zapisz   | zapisz plik         | Format rozkazu WCZYTAJ: 0_R1_7_INT    |" << endl;
+    cout << "|           Operacje edytora          | Format rozkazu WCZYTAJ: 0_R1_7_INT    |" << endl;
+    cout << "+----+----------+---------------------+-----+---------------------------------+" << endl;
+    cout << "| 11 | zapisz   | zapisz plik         | INT | wczytaj do R1 stala INT         |" << endl;
 }
 
 void wyswietlMenu()
 {
-    cout << "+-------------------------------OPIS APLIKACJI--------------------------------+" << endl;
+    cout << "+--------------------------------OPIS APLIKACJI-------------------------------+" << endl;
     cout << "| Aplikacja pozwala stworzyc i zapisac plik programu maszyny wirtualnej (VM)  |" << endl;
     cout << "| oraz jego wykonanie w VM, ktorej dzialanie jest opisane podczas tworzenia   |" << endl;
     cout << "| pliku oraz szczegolowy opis dostepny jest w MENU GLOWNYM.                   |" << endl;
     cout << "| Program jest wykonywany krokowo (instrukcja po instrukcji).                 |" << endl;
-    cout << "| Wczasie pracy wyswietlany jest obecny stan Maszyny Wirtualnej               |" << endl;
+    cout << "| W czasie pracy wyswietlany jest obecny stan Maszyny Wirtualnej              |" << endl;
     cout << "| Autor: Tomasz Kisielewski EiT K3 s165678                                    |" << endl;
     cout << "+---------------------------------MENU GLOWNE---------------------------------+" << endl;
     cout << "| 1. Szczegolowy opis Maszyny Wirtualnej                                      |" << endl;
@@ -642,7 +701,7 @@ void wyswietlMenuSzczegoly()
     cout << "| - Rejestr instrukcji przechowuje liczbe (int) bez znaku informujaca o tym,  |" << endl;
     cout << "|   ktora z kolei jest wykonwyana instrukcja. Jest autoinkrementowany,        |" << endl;
     cout << "|   operacja skoku zmienia odpowiednio jego wartosc                           |" << endl;
-    cout << "+ - Trojstanowy rejestr flagi przechowuje informacje o wyniku ostatniej       |" << endl;
+    cout << "| - Trojstanowy rejestr flagi przechowuje informacje o wyniku ostatniej       |" << endl;
     cout << "|   operacji arytmetycznej (dodawanie, odejmowanie, mnozenie, dzielenie,      |" << endl;
     cout << "|   porownanie) i w zaleznosi od jej rezultatu przyjmuje wartosc:             |" << endl;
     cout << "|    * flaga D (1) dla dodatniego wyniku                                      |" << endl;
@@ -702,11 +761,11 @@ void wyswietlPrzyklad(int iKtory)
             cout << "+-----------------------------------------------------------------------------+" << endl;
             cout << "| * Pobierz liczbe z klawiatury do rejestru 0 (0*2^4+8 = 8)                   |" << endl;
             cout << "| * Porownaj rejestr 0 z rejestrem 2 (2*2^10+0*2^4+4 = 2052)                  |" << endl;
-            cout << "| * Skocz o 2 instrukcje do przodu jeśli nie zero (2*2^4+6 = 38 INT: 2)       |" << endl;
+            cout << "| * Skocz o 2 instrukcje do przodu jesli nie zero (2*2^4+6 = 38 SKOK: 2)      |" << endl;
             cout << "| * Skoncz program (10 = 10)                                                  |" << endl;
-            cout << "| * Do rejestru 1 dodaj rejestr 0, wynik do rejestru 1 (0*2^10+1*2^4+0 = 16)  |" << endl;
+            cout << "| * Do rejestru 1 dodaj rejestr 0 (0*2^10+1*2^4+0 = 16)                       |" << endl;
             cout << "| * Wypisz rejestr 1 (1*2^4+9 = 25)                                           |" << endl;
-            cout << "| * Skocz o 6 instrukcji do tyłu (0*2^4+6 = 6)                                |" << endl;
+            cout << "| * Skocz o 6 instrukcji do tylu (0*2^4+6 = 6)                                |" << endl;
             cout << "+-----------------------------------------------------------------------------+" << endl;
             cout << "| 0. Powrot do MENU PRZYKLADY                                                 |" << endl;
             cout << "+-----------------------------------------------------------------------------+" << endl;
@@ -755,14 +814,14 @@ void wyswietlPrzyklad(int iKtory)
             cout << "| * Pobierz liczbe z klawiatury do rejestru 1 (1*2^4 + 8 = 24)                |" << endl;
             cout << "| * Pobierz liczbe z klawiatury do rejestru 2 (2*2^4 + 8 = 40)                |" << endl;
             cout << "| * Porownaj rejestr 0 z rejestrem 1 (1*2^10 + 0*2^4 + 4 = 1028)              |" << endl;
-            cout << "| * Skocz o 2 instrukcje do przodu jesli dodatnia (3*2^4 + 6 = 54 INT: 2)     |" << endl;
-            cout << "| * Skocz o 4 instrukcje do przodu jesli ujemna (4*2^4 + 6 = 70 INT: 4)       |" << endl;
+            cout << "| * Skocz o 2 instrukcje do przodu jesli dodatnia (3*2^4 + 6 = 54 SKOK: 2)    |" << endl;
+            cout << "| * Skocz o 4 instrukcje do przodu jesli ujemna (4*2^4 + 6 = 70 SKOK: 4)      |" << endl;
             cout << "| * Porownaj rejestr 0 z rejestrem 2 (2*2^10 + 0*2^4 + 4 = 2052)              |" << endl;
-            cout << "| * Skocz o 6 instrukcje do przodu jesli dodatnia (3*2^4 + 6 = 54 INT: 6)     |" << endl;
-            cout << "| * Skocz o 9 instrukcje do przodu jesli ujemna (4*2^4 + 6 = 70 INT: 9)       |" << endl;
+            cout << "| * Skocz o 6 instrukcje do przodu jesli dodatnia (3*2^4 + 6 = 54 SKOK: 6)    |" << endl;
+            cout << "| * Skocz o 9 instrukcje do przodu jesli ujemna (4*2^4 + 6 = 70 SKOK: 9)      |" << endl;
             cout << "| * Porownaj rejestr 1 z rejestrem 2 (2*2^10 + 1*2^4 + 4 = 2068)              |" << endl;
-            cout << "| * Skocz o 5 instrukcje do przodu jesli dodatnia (3*2^4 + 6 = 54 INT: 5)     |" << endl;
-            cout << "| * Skocz o 6 instrukcje do przodu jesli ujemna (4*2^4 + 6 = 70 INT: 6)       |" << endl;
+            cout << "| * Skocz o 5 instrukcje do przodu jesli dodatnia (3*2^4 + 6 = 54 SKOK: 5)    |" << endl;
+            cout << "| * Skocz o 6 instrukcje do przodu jesli ujemna (4*2^4 + 6 = 70 SKOK: 6)      |" << endl;
             cout << "| * Skoncz program (10 = 10)                                                  |" << endl;
             cout << "| * Wypisz rejestr 0 (0*2^4 + 9 = 9)                                          |" << endl;
             cout << "| * Skocz o 2 instrukcje do tylu (0*2^4 + 6 = 6 INT: -2)                      |" << endl;
@@ -779,29 +838,24 @@ void wyswietlPrzyklad(int iKtory)
     }
 }
 
-void wyswietlRozkaz(int iRozkaz)
+void wyswietlBlad(int iBlad)
 {
-    cout << iRozkaz << ": ";
-    for (int i = 15; i >= 0; i--)
-    {
-        if((i+1) == 10 || (i+1) == 4)
-            cout << " ";
-        cout << abs(((iRozkaz >> i) % 2));
+    switch (iBlad) {
+        case bladDziel:
+        {
+            cout << "+------------------------------------BLAD-------------------------------------+" << endl;
+            cout << "|                     BLAD WYKONYWANIA: DZIELENIE PRZEZ 0                     |" << endl;
+            cout << "+-----------------------------------------------------------------------------+" << endl;
+            break;
+        }
+        case bladEof:
+        {
+            cout << "+------------------------------------BLAD-------------------------------------+" << endl;
+            cout << "|                        BLAD WYKONYWANIA: KONIEC PLIKU                       |" << endl;
+            cout << "+-----------------------------------------------------------------------------+" << endl;
+            break;
+        }
+        default:
+            break;
     }
-    cout << endl;
 }
-
-void wyswietlRozkazInt(int iRozkaz, int iSlowo)
-{
-    cout << iRozkaz << ": ";
-    for (int i = 15; i >= 0; i--)
-    {
-        if((i+1) == 10 || (i+1) == 4)
-            cout << " ";
-        cout << abs(((iRozkaz >> i) % 2));
-    }
-    if(!(iRozkaz % 6) || !(iRozkaz % 7))
-        cout << " INT: " << iSlowo;
-    cout << endl;
-}
-

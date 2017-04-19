@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:maszyna.xcodeproj">
+      location = "self:/Users/kisiel/Programowanie/Projekty/maszyna/maszyna_wirtualna.xcodeproj">
    </FileRef>
 </Workspace>

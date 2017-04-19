@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "111E868C1DFE09AE0011A4FA"
-               BuildableName = "maszyna"
-               BlueprintName = "maszyna"
-               ReferencedContainer = "container:maszyna.xcodeproj">
+               BuildableName = "maszyna_wirtualna"
+               BlueprintName = "maszyna_wirtualna"
+               ReferencedContainer = "container:maszyna_wirtualna.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "111E868C1DFE09AE0011A4FA"
-            BuildableName = "maszyna"
-            BlueprintName = "maszyna"
-            ReferencedContainer = "container:maszyna.xcodeproj">
+            BuildableName = "maszyna_wirtualna"
+            BlueprintName = "maszyna_wirtualna"
+            ReferencedContainer = "container:maszyna_wirtualna.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "111E868C1DFE09AE0011A4FA"
-            BuildableName = "maszyna"
-            BlueprintName = "maszyna"
-            ReferencedContainer = "container:maszyna.xcodeproj">
+            BuildableName = "maszyna_wirtualna"
+            BlueprintName = "maszyna_wirtualna"
+            ReferencedContainer = "container:maszyna_wirtualna.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "111E868C1DFE09AE0011A4FA"
-            BuildableName = "maszyna"
-            BlueprintName = "maszyna"
-            ReferencedContainer = "container:maszyna.xcodeproj">
+            BuildableName = "maszyna_wirtualna"
+            BlueprintName = "maszyna_wirtualna"
+            ReferencedContainer = "container:maszyna_wirtualna.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
