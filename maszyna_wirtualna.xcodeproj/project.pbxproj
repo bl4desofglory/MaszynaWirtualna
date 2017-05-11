@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		111E86911DFE09AF0011A4FA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 111E86901DFE09AF0011A4FA /* main.cpp */; };
+		11E84D481EC468A6001E39B3 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11E84D471EC468A6001E39B3 /* menu.cpp */; };
+		11E84D4B1EC468DA001E39B3 /* plik.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11E84D491EC468DA001E39B3 /* plik.cpp */; };
+		11E84D4D1EC4692E001E39B3 /* wyswietl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11E84D4C1EC4692E001E39B3 /* wyswietl.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +28,10 @@
 /* Begin PBXFileReference section */
 		111E868D1DFE09AF0011A4FA /* maszyna_wirtualna */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = maszyna_wirtualna; sourceTree = BUILT_PRODUCTS_DIR; };
 		111E86901DFE09AF0011A4FA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		11E84D461EC46455001E39B3 /* header.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = header.hpp; sourceTree = "<group>"; };
+		11E84D471EC468A6001E39B3 /* menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = menu.cpp; sourceTree = "<group>"; };
+		11E84D491EC468DA001E39B3 /* plik.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plik.cpp; sourceTree = "<group>"; };
+		11E84D4C1EC4692E001E39B3 /* wyswietl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wyswietl.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +65,10 @@
 			isa = PBXGroup;
 			children = (
 				111E86901DFE09AF0011A4FA /* main.cpp */,
+				11E84D461EC46455001E39B3 /* header.hpp */,
+				11E84D471EC468A6001E39B3 /* menu.cpp */,
+				11E84D491EC468DA001E39B3 /* plik.cpp */,
+				11E84D4C1EC4692E001E39B3 /* wyswietl.cpp */,
 			);
 			name = maszyna_wirtualna;
 			path = maszyna;
@@ -120,7 +131,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11E84D481EC468A6001E39B3 /* menu.cpp in Sources */,
+				11E84D4D1EC4692E001E39B3 /* wyswietl.cpp in Sources */,
 				111E86911DFE09AF0011A4FA /* main.cpp in Sources */,
+				11E84D4B1EC468DA001E39B3 /* plik.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
