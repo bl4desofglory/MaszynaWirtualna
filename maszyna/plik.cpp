@@ -103,8 +103,8 @@ void plikTworz(fstream &plik)
                 cntInstrukcja++;
                 break;
             }
-            case opWyswietl:
             case opPobierz:
+            case opWyswietl:
             {
                 bBlad = true;
                 while(bBlad)
@@ -188,7 +188,7 @@ void plikTworz(fstream &plik)
                     cout << "Podaj wartosc stalej: " << endl << "> ";
                     if(!cin >> iSlowo)
                     {
-                        cout << "Bledna wartosc skoku!" << endl;
+                        cout << "Bledna wartosc stalej!" << endl;
                     }
                     else
                         bBlad = false;
